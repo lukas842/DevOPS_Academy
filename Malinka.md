@@ -1,1 +1,0 @@
-Malnika darinka pomaranc
