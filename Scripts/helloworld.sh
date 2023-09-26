@@ -2,6 +2,6 @@
 
 echo "Hello world!"
 
-read -p "How are you" Ans
+read -p "How are you? " Ans
 
-echo "You are $Ans"
+echo "I am $Ans"
