@@ -2,4 +2,4 @@
 
 ## *Lukas Kopcak*
 
-## lukaskopcak@gmail.com
+## GIT a GITHUB 
