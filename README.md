@@ -6,7 +6,8 @@
 Link na [facebook](www.facebook.com)
 
 
-Luaks
-KOpcak`
 
-## UPDATE TASK10
+Lukas Kopcak
+
+## UPDATE TASK12
+
