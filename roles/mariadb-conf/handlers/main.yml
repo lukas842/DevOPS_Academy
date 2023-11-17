@@ -1,0 +1,7 @@
+---
+# handlers file for mariadb-conf
+- name: restart apache2
+  become: yes
+  service:
+    name: apache2
+    state: restarted

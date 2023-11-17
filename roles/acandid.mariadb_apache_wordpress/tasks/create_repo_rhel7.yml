@@ -1,0 +1,15 @@
+---
+- name: Install repo for php new version
+  yum:
+    name: "{{ php_repo }}"
+    state: present  
+#
+- name: Create MariaDB repo
+  yum_repository:
+    name: mariadb
+    description: MariaDB repo
+    baseurl: "{{ mariadb_repo }}"
+    gpgkey: "{{ mariadb_gpgkey }}"
+    gpgcheck: yes
+    enabled: yes
+...

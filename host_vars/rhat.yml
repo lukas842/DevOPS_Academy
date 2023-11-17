@@ -1,0 +1,5 @@
+ansible_host: 54.93.43.85 
+ansible_user: ec2-user 
+ansible_connection: ssh 
+ansible_port: 22 
+ansible_become_pass: "{{ redhat_become_pass }}"

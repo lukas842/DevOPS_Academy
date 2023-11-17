@@ -1,0 +1,9 @@
+---
+# defaults file for LAMP
+base_packages: 
+  - apache2
+  - php8.2
+  - php8.2-mysql
+  - mariadb-server
+  - mariadb-client
+  - libapache2-mod-php

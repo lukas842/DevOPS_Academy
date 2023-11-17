@@ -1,0 +1,18 @@
+---
+- name: Administrative playbook
+  hosts:
+    - ubuntu
+    # - debian
+  gather_facts: yes 
+  
+  vars_files:
+    - vars/secrets.yml
+  
+  vars:
+    bg_url: https://thumbs.dreamstime.com/z/isolated-headshot-african-american-business-woman-ceo-finance-law-attorney-legal-representative-white-background-167982948.jpg
+    bg_img_filename: administrative.jpg
+
+
+  roles:
+    - common
+    - office

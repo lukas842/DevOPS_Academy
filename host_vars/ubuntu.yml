@@ -1,0 +1,5 @@
+ansible_host: 18.184.157.120 
+ansible_user: ubuntu 
+ansible_connection: ssh 
+ansible_port: 22 
+ansible_become_pass: "{{ ubuntu_become_pass }}"

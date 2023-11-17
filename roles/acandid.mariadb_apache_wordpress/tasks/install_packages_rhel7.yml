@@ -1,0 +1,11 @@
+---
+- name: Install {{ packages }}
+  yum:
+    name: "{{ packages }}"
+    state: latest
+#
+- name: Install php new version
+  command: "{{ command }}"
+  args:
+    warn: false
+...

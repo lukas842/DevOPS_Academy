@@ -1,0 +1,48 @@
+---
+# tasks file for common
+- name: Add php repository
+  become: yes
+  ansible.builtin.apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+  tags:
+    - packages
+
+# sudo apt-get update && sudo apt-get install htop vim kazam filezilla bluefish
+- name: Install base packages
+  become: yes
+  apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: yes
+  tags:
+    - packages
+
+- name: Create Pictures dir
+  file:
+    path: "{{ pic_path }}"
+    state: directory
+  tags:
+    - background
+
+- name: Download bg image
+  get_url:
+    url: https://cdn.wallpapersafari.com/55/73/ghY4rc.jpg
+    dest: "{{ pic_path }}/bg.jpg"
+  tags:
+    - background
+
+- name: Write CPU info into file
+  template:
+    src: stats.j2
+    dest: /tmp/cpu.txt
+  tags:
+    - template
+
+- name: Create files from template
+  template:
+    src: config.j2
+    dest: "/tmp/{{ item }}.txt"
+  loop: "{{ servers }}"
+  tags:
+    - template

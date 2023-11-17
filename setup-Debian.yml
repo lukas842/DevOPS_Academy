@@ -1,0 +1,46 @@
+---
+
+- name: Import the PHP repository key (Debian)
+  become: yes
+  ansible.builtin.apt_key:
+    url: "https://packages.sury.org/php/apt.gpg"
+    state: present
+  tags:
+    - packages
+
+- name: Add the PHP repository (Debian)
+  become: yes
+  ansible.builtin.apt_repository:
+    repo: "deb https://packages.sury.org/php/ {{ ansible_lsb.codename }} main"
+    state: present
+  when: ansible_os_family == 'Debian'
+  tags:
+    - packages
+
+- name: Install base packages (apache,php,mariadb)
+  become: yes
+  apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+  notify:
+    - restart apache2
+    - restart mariadb
+  tags:
+    - packages
+  
+- name: Deploy index.html
+  become: yes
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.html
+    dest: /var/www/html/index.html
+    mode: '0644'
+
+- name: Deploy index.php
+  become: yes
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.php
+    dest: /var/www/html/index.php
+    mode: '0644'
+

@@ -1,0 +1,18 @@
+---
+# tasks file for office
+- name: Install packages for Office
+  become: yes
+  apt:
+    name: "{{ office_packages }}"
+    state: present
+    update_cache: yes
+  tags:
+    - office
+
+- name: set background
+  get_url:
+    url: "{{ bg_url }}"
+    dest: "~/Pictures/{{ bg_img_filename }}"
+    mode: '0644'
+  tags:
+    - office

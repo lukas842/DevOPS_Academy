@@ -1,0 +1,58 @@
+---
+# tasks file for LAMP
+#apache2, php8.2, php8.2-mysql, mariadb-server, mariadb-client  
+
+- name: Add php repository for Ubuntu
+  block:
+    - name: Add PPA for PHP on Ubuntu
+      become: yes
+      ansible.builtin.apt_repository:
+       repo: ppa:ondrej/php
+       state: present
+  when: ansible_distribution == 'Ubuntu'
+  tags:
+    - packages
+
+- name: Install base packages (apache,php,mariadb)
+  become: yes
+  when: ansible_os_family == 'Debian'
+  apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: yes
+  notify:
+    - restart apache2
+    - restart mariadb
+  tags:
+    - packages
+  
+  
+  
+- name: Deploy index.html
+  become: yes
+  when: ansible_os_family == 'Debian'
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.html
+    dest: /var/www/html/index.html
+    mode: '0644'
+
+- name: Deploy index.php
+  become: yes
+  when: ansible_os_family == 'Debian'
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.php
+    dest: /var/www/html/index.php
+    mode: '0644'
+
+##debian
+
+- include_tasks: Debian-family.yml
+  when: ansible_os_family == 'Debian'
+
+## rhat
+
+- include_tasks: /home/ubuntu/ansible/roles/LAMP/tasks/RedHat-family.yml
+  when: ansible_os_family == 'RedHat'
+
+
+

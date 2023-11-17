@@ -1,0 +1,58 @@
+---
+- name: Installing on redhat
+  become: yes
+  when: ansible_distribution == 'RedHat'
+  block:
+  - name: Install EPEL repository
+    ansible.builtin.yum:
+      name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+      name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
+      state: present
+      disable_gpg_check: yes
+
+  - name: Ensure yum-utils is installed for yum-config-manager
+    ansible.builtin.yum:
+      name: yum-utils
+      state: present
+        
+  - name: Install PHP
+    ansible.builtin.yum:
+          name:
+            - httpd
+            - php
+            - php-cli
+            - php-fpm
+            - php-json
+            - php-common
+            - php-mysqlnd
+            - php-zip
+            - php-gd
+            - php-mbstring
+            - php-curl
+            - php-xml
+            - php-pear
+            - php-bcmath
+          state: present
+  
+  - name: restart apache2
+    become: yes
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+- name: Deploy index.html
+  become: yes
+  when: ansible_os_family == 'RedHat'
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.html
+    dest: /var/www/html/index.html
+    mode: '0644'
+
+- name: Deploy index.php
+  become: yes
+  when: ansible_os_family == 'RedHat'
+  copy:
+    src: /home/ubuntu/ansible/roles/LAMP/files/index.php
+    dest: /var/www/html/index.php
+    mode: '0644'

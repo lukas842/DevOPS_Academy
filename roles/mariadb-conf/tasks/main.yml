@@ -1,0 +1,86 @@
+---
+# tasks file for mariadb-conf
+- name: Install phpmyadmin
+  become: yes
+  apt:
+    name: 
+      - phpmyadmin
+      - python3-pip
+    state: present
+    update_cache: yes
+  notify: restart apache2
+
+- name: Include phpmyadmin apache conf
+  become: yes
+  lineinfile:
+    path: /etc/apache2/apache2.conf
+    regexp: "^[\\t\\f ]*Include\\s+\\S+phpmyadmin\\S*$"
+    line: Include /etc/phpmyadmin/apache.conf
+    state: present
+    insertafter: EOF
+
+- name: Generate root passwd
+  become: yes
+  shell: 
+    cmd: openssl rand -base64 6
+    creates: /root/.my.cnf
+  register: root_pass_out
+
+# - set_fact:
+#     root_pass: "{{ root_pass_out.stdout }}"
+
+# - debug:
+#     var: root_pass
+
+- name: "Check if {{ mysql_config_path }} exists"
+  become: yes
+  stat:
+    path: "{{ mysql_config_path }}"
+  register: st
+
+- name: Init DB configuration
+  become: yes
+#  when: st.stat.exists == false
+  block: 
+    - name: create lowercase 8 character name for Kubernetes pod name
+      ansible.builtin.set_fact:
+        root_pass: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=8) }}"
+
+    - name: "Create {{ mysql_config_path }}"
+      template:
+        src: my.cnf.j2
+        dest: "{{ mysql_config_path }}"
+
+    - name: Install PyMySQL
+      pip:
+        name: PyMySQL
+        state: present
+
+    - name: Set root passwd
+      mysql_user:
+        name: root
+        password: "{{ root_pass }}"
+        host: "{{ host }}"
+        priv: '*.*:ALL,GRANT'
+        state: present
+        login_unix_socket: /var/run/mysqld/mysql.sock
+      loop: "{{ mysql_hosts }}"
+      loop_control:
+        loop_var: host
+
+    - name: Removes anonymous user account for localhost
+      community.mysql.mysql_user:
+        name: ''
+        host: localhost
+        state: absent
+        login_unix_socket: /var/run/mysqld/mysql.sock
+
+    - name: Remove test db
+      mysql_db:
+        name: test
+        state: absent
+        login_unix_socket: /var/run/mysqld/mysql.sock
+
+# - when: st.stat.exists
+#   debug:
+#     msg: "Skipping init DB configuration. Already configured."

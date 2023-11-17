@@ -1,0 +1,37 @@
+#MariaDB Repo for Mariadb version 10.4
+mariadb_repo: http://yum.mariadb.org/10.4/rhel7-amd64
+mariadb_gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+#Repo for php version 7.3
+php_repo: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+#
+db_name: wordpress
+#
+db_user: wordpress
+#
+db_user_password:
+#
+db_host: localhost
+#
+root_password:
+root_login: root
+#
+#install packages
+packages:
+  - httpd
+  - MariaDB-server
+  - MariaDB-client
+  - mod_ssl
+  - unzip
+  - MySQL-python
+# Command install php new version
+command: yum --enablerepo=remi,remi-php73 install php php-common php-mysql php-mysqlnd -y
+#
+start_db: mariadb
+start_web: httpd
+#Web configure
+web_path: /var/www/html
+web_owner: apache
+web_group: apache
+#
+wordpress_file_path: /wordpress/wp-config.php
+wordpress_file_default: /wordpress/wp-config-sample.php

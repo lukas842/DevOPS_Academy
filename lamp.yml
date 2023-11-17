@@ -1,0 +1,14 @@
+---
+- name: lamp playbook
+  hosts:
+    - localhost
+#    - debian
+#    - rhat
+  gather_facts: yes 
+     
+  vars_files:
+    - vars/secrets.yml
+
+  roles:
+    # - LAMP
+    - acandid.mariadb_apache_wordpress

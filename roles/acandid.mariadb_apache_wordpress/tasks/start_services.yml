@@ -1,0 +1,10 @@
+---
+- name: Start services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - "{{ start_db }}"
+    - "{{ start }}"
+...
