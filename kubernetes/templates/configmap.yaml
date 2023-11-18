@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: app-settings
-  namespace: application
-data:
-  query: bratislava,sk
-  units: metric
-  update_interval: "20"
