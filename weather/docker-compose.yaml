@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:2.10
+    command:
+    - "--api.insecure=true" #zapne dash
+    - "--providers.docker=true"  #komunikacia s dockerom
+    - "--providers.docker.exposedbydefault=false"
+
+    - "--entrypoints.web.address=:80"
+
+    ports:
+      #http port
+    - 80:80
+      #traefik dashboard
+    - 8080:8080
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+
+
+  weather: 
+    image: bletvaska/weather
+    environment:
+      - WEATHER_TOKEN=9e547051a2a00f2bf3e17a160063002d
+      - WEATHER_QUERY=poprad,sk
+      - WEATHER_UPDATE_INTERVAL=120
+      - WEATHER_BASE_URL=http://${HOSTIP}:8000
+    labels:
+        traefik.enable: true
+        traefik.http.services.weather.loadbalancer.server.port: 8000
+        traefik.http.middlewares.weather-rewrite.replacepathregex.regex: "^/weather/(.*)"
+        traefik.http.middlewares.weather-rewrite.replacepathregex.replacement: "/$$1"
+        #routers
+        traefik.http.routers.weather.entrypoints: web
+        traefik.http.routers.weather.rule: PathPrefix(`/weather/`)
+        traefik.http.routers.weather.middlewares: "weather-rewrite"

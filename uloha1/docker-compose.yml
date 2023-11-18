@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  wp:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - wordpress
+    volumes:
+      - wp_wordpress:/var/www/html
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
+      MYSQL_RANDOM_ROOT_PASSWORD: secret
+    volumes:
+      - wp_db:/var/lib/mysql
+    networks:
+      - wordpress
+
+  adminer:
+    image: adminer
+    ports: 
+      - 8081:8080
+    networks:
+      - wordpress
+
+
+networks:
+  wordpress: {}
+
+volumes:
+  wp_wordpress:
+  wp_db:

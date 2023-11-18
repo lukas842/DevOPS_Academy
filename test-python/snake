@@ -1,0 +1,89 @@
+
+"""
+snake game
+"""
+import random
+import sys
+import os
+import random
+import pygame as snake
+
+# Define Constants
+os.environ['SDL_AUDIODRIVER'] = 'dsp'
+WIDTH, HEIGHT = 800, 600
+TILE_SIZE = 20
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+
+# Set up the game window
+snake.init()
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+screen = snake.display.set_mode((WIDTH, HEIGHT))
+snake.display.set_caption("Snake")
+
+# Define Snake and Food Positions
+snake_pos = [(100, 50)]
+food = (
+    random.randint(0, (WIDTH // TILE_SIZE) - 1) * TILE_SIZE,
+    random.randint(0, (HEIGHT // TILE_SIZE) - 1) * TILE_SIZE,
+)
+
+# Define Initial Direction
+direction = (1, 0)
+
+RUNNING = True
+while RUNNING:
+    for event in snake.event.get():
+        if event.type == snake.QUIT:
+            RUNNING = False
+        elif event.type == snake.KEYDOWN:
+            if event.key == snake.K_UP and direction != (0, 1):
+                direction = (0, -1)
+            elif event.key == snake.K_DOWN and direction != (0, -1):
+                direction = (0, 1)
+            elif event.key == snake.K_LEFT and direction != (1, 0):
+                direction = (-1, 0)
+            elif event.key == snake.K_RIGHT and direction != (-1, 0):
+                direction = (1, 0)
+
+    # Update Snake Position
+    new_head = (
+        snake_pos[0][0] + direction[0] * TILE_SIZE,
+        snake_pos[0][1] + direction[1] * TILE_SIZE,
+    )
+    snake_pos.insert(0, new_head)
+
+    # Check for Collision with Food
+    if snake_pos[0] == food:
+        food = (
+            random.randint(0, (WIDTH // TILE_SIZE) - 1) * TILE_SIZE,
+            random.randint(0, (HEIGHT // TILE_SIZE) - 1) * TILE_SIZE,
+        )
+    else:
+        snake_pos.pop()
+
+    # Check for Collision with Boundaries
+    if (
+        snake_pos[0][0] < 0
+        or snake_pos[0][0] >= WIDTH
+        or snake_pos[0][1] < 0
+        or snake_pos[0][1] >= HEIGHT
+    ):
+        RUNNING = False
+
+    # Draw Snake and Food
+    screen.fill(WHITE)
+    for segment in snake_pos:
+        snake.draw.rect(screen, GREEN, (segment[0], segment[1], TILE_SIZE, TILE_SIZE))
+    snake.draw.rect(screen, RED, (food[0], food[1], TILE_SIZE, TILE_SIZE))
+
+    # Update Display and Control Speed
+    snake.display.update()
+    snake.time.delay(150)
+
+# Quit the game
+snake.quit()
+sys.exit()
+#=======
+#main

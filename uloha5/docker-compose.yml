@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wp_user
+      - MYSQL_PASSWORD=wp_password
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - wordpress
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - wordpress
+
+  wp:
+    image: wordpress
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wp_user
+      - WORDPRESS_DB_PASSWORD=wp_password
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_TABLE_PREFIX=wp_test
+    ports:
+      - 80:80
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - wordpress
+
+volumes:
+  wordpress: {}
+  mysql: {}
+
+networks:
+  wordpress: {}
